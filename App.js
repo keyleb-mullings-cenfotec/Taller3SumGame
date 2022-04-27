@@ -6,7 +6,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       {/* <Text>Open up App.js to start working on your app!</Text> */}
-      <Game randomNumbersCount = {6}/>
+      <Game randomNumbersCount = {6} initialSeconds={10}/>
       <StatusBar style="auto" />
     </View>
   );
