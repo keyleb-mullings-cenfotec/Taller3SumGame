@@ -63,6 +63,20 @@ export default Game = ({ randomNumbersCount, initialSeconds }) => {
     };
     // const status = gameStatus();
 
+    const setInitState = () => {
+        clearInterval(intervalId.current);
+        const numbers = Array.from({ length: randomNumbersCount }).map(() => 1 + Math.floor(10 * Math.random()));
+        const target = numbers.slice(0, randomNumbersCount - 2).reduce((acc, cur) => acc + cur, 0);
+
+        setRandomNumbers(numbers);
+        setTarget(target);
+        setSelectedNumbers([])
+        // setRemainingSeconds(initialSeconds);
+        intervalId.current = setInterval(() => setRemainingSeconds(seconds => seconds - 1), 1000);
+        setGameStatus("PLAYING");
+    };
+
+
     return (
         <View>
             <Text style={styles.target}>{target}</Text>
@@ -79,15 +93,15 @@ export default Game = ({ randomNumbersCount, initialSeconds }) => {
                     />
                 ))}
             </View>
-            <View>
+            {/* <View>
                 <PlayAgainButton style={[styles.playAgainButton]}></PlayAgainButton>
-            </View>
-            {/* <Button
+            </View> */}
+            <Button
                 style={styles.PlayAgainButton}
                 title="Play Again"
-                onPress={() => App()}
-                onPress={() => Alert.alert('Simple Button pressed')}
-            /> */}
+                onPress={() => setInitState()}
+            // onPress={() => Alert.alert('Simple Button pressed')}
+            />
         </View>
     );
 }
@@ -113,15 +127,15 @@ const styles = StyleSheet.create({
     WON: {
         backgroundColor: 'green'
     },
-    // playAgainButton: {
-    //     backgroundColor: '#40B4C1',
-    //     color: '#fff',
-    //     width: 'auto',
-    //     marginHorizontal: 15,
-    //     marginVertical: 300,
-    //     fontSize: 50,
-    //     textAlign: 'center',
+    playAgainButton: {
+        backgroundColor: '#40B4C1',
+        color: '#fff',
+        width: 'auto',
+        marginHorizontal: 15,
+        marginVertical: 300,
+        fontSize: 50,
+        textAlign: 'center',
         // display: 'none',
         // minHeight: 45,
-    // }
+    }
 })
