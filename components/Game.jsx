@@ -2,6 +2,7 @@ import { Alert, Button, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState, useRef } from "react";
 import Number from "./Number";
 import App from "../App";
+import PlayAgainButton from "./PlayAgainButton";
 
 export default Game = ({ randomNumbersCount, initialSeconds }) => {
     const [randomNumbers, setRandomNumbers] = useState([]);
@@ -50,6 +51,8 @@ export default Game = ({ randomNumbersCount, initialSeconds }) => {
     const getGameStatus = () => {
         const sumSelected = selectedNumbers.reduce((acc, cur) => acc + randomNumbers[cur], 0);
         if (remainingSeconds === 0 || sumSelected > target) {
+            // PlayAgainButton.styles.random = 'contents';
+            // styles.playAgainButton.display = 'flex';
             return 'LOST';
         } else if (sumSelected === target) {
             return 'WON';
@@ -76,12 +79,15 @@ export default Game = ({ randomNumbersCount, initialSeconds }) => {
                     />
                 ))}
             </View>
-            <Button
+            <View>
+                <PlayAgainButton style={[styles.playAgainButton]}></PlayAgainButton>
+            </View>
+            {/* <Button
                 style={styles.PlayAgainButton}
                 title="Play Again"
                 onPress={() => App()}
-                // onPress={() => Alert.alert('Simple Button pressed')}
-            />
+                onPress={() => Alert.alert('Simple Button pressed')}
+            /> */}
         </View>
     );
 }
@@ -107,10 +113,15 @@ const styles = StyleSheet.create({
     WON: {
         backgroundColor: 'green'
     },
-    playAgainButton: {
-        fontSize: 40,
-        backgroundColor: 'yellow',
-        textAlign: 'center',
-        display: 'none',
-    }
+    // playAgainButton: {
+    //     backgroundColor: '#40B4C1',
+    //     color: '#fff',
+    //     width: 'auto',
+    //     marginHorizontal: 15,
+    //     marginVertical: 300,
+    //     fontSize: 50,
+    //     textAlign: 'center',
+        // display: 'none',
+        // minHeight: 45,
+    // }
 })
