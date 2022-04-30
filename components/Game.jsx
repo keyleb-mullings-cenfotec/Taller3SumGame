@@ -1,45 +1,29 @@
 import { Alert, Button, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState, useRef } from "react";
 import Number from "./Number";
-import App from "../App";
-import PlayAgainButton from "./PlayAgainButton";
 
 export default Game = ({ randomNumbersCount, initialSeconds }) => {
-    const [randomNumbers, setRandomNumbers] = useState([]);
+    const [randomNumbers, setRandomNumbers] = useState([0,0,0,0,0,0]);
     const [target, setTarget] = useState();
     const [selectedNumbers, setSelectedNumbers] = useState([]);
     const [remainingSeconds, setRemainingSeconds] = useState(initialSeconds);
     const [gameStatus, setGameStatus] = useState('PLAYING');
+    let intervalId;
+    const [startPlayButtonVisible, setStartPlayButtonVisible] = useState(false);
 
-    const intervalId = useRef();
-    // No array -> Exc all the time
-    // Empty array -> Exc once the first time
-    // Full array -> Exc on change
-    // Return -> Exc on dismount
-    useEffect(() => console.log(selectedNumbers), [selectedNumbers]);
-
-    useEffect(() => {
-        // Exc
-        const numbers = Array.from({ length: randomNumbersCount }).map(() => 1 + Math.floor(10 * Math.random()));
-        const target = numbers.slice(0, randomNumbersCount - 2).reduce((acc, cur) => acc + cur, 0);
-
-        setRandomNumbers(numbers);
-        setTarget(target);
-
-        intervalId.current = setInterval(() => setRemainingSeconds(seconds => seconds - 1), 1000);
-        return () => clearInterval(intervalId.current);
-    }, []);
-
-    // useEffect(()=>{
-    //     if (remainingSeconds === 0) {
-    //         clearInterval(intervalId.current);
-    //     }
-    // }, [remainingSeconds]);
+    
+      useEffect(() => {
+        if (startPlayButtonVisible) {   
+        intervalId = setInterval(() => setRemainingSeconds(seconds => seconds - 1), 1000);
+        }
+        return () => clearInterval(intervalId);
+    }, [remainingSeconds, startPlayButtonVisible]);
+    
 
     useEffect(() => {
         setGameStatus(() => getGameStatus());
         if (remainingSeconds === 0 || gameStatus !== 'PLAYING') {
-            clearInterval(intervalId.current);
+            clearInterval(intervalId);
 
         }
     }, [remainingSeconds, selectedNumbers]);
@@ -49,36 +33,32 @@ export default Game = ({ randomNumbersCount, initialSeconds }) => {
         setSelectedNumbers([...selectedNumbers, number]);
     }
     const getGameStatus = () => {
+
         const sumSelected = selectedNumbers.reduce((acc, cur) => acc + randomNumbers[cur], 0);
         if (remainingSeconds === 0 || sumSelected > target) {
-            // PlayAgainButton.styles.random = 'contents';
-            // styles.playAgainButton.display = 'flex';
             return 'LOST';
         } else if (sumSelected === target) {
             return 'WON';
-
         } else {
             return 'PLAYING';
         }
     };
-    // const status = gameStatus();
 
     const setInitState = () => {
-        clearInterval(intervalId.current);
+        clearInterval(intervalId);
+        intervalId = null;
         const numbers = Array.from({ length: randomNumbersCount }).map(() => 1 + Math.floor(10 * Math.random()));
         const target = numbers.slice(0, randomNumbersCount - 2).reduce((acc, cur) => acc + cur, 0);
-
         setRandomNumbers(numbers);
         setTarget(target);
         setSelectedNumbers([])
-        // setRemainingSeconds(initialSeconds);
-        intervalId.current = setInterval(() => setRemainingSeconds(seconds => seconds - 1), 1000);
+        setRemainingSeconds(initialSeconds);
         setGameStatus("PLAYING");
+        setStartPlayButtonVisible(true);
     };
 
-
     return (
-        <View>
+        <View style={{flex: 1, backgroundColor: "white"}}>
             <Text style={styles.target}>{target}</Text>
             <Text style={[styles.target, styles[gameStatus]]}>{gameStatus}</Text>
             <Text>{remainingSeconds}</Text>
@@ -93,15 +73,14 @@ export default Game = ({ randomNumbersCount, initialSeconds }) => {
                     />
                 ))}
             </View>
-            {/* <View>
-                <PlayAgainButton style={[styles.playAgainButton]}></PlayAgainButton>
-            </View> */}
-            <Button
+            <View style={{flex: 1}}>
+               
+                <Button
                 style={styles.PlayAgainButton}
-                title="Play Again"
+                title="PLAY"
                 onPress={() => setInitState()}
-            // onPress={() => Alert.alert('Simple Button pressed')}
-            />
+            /> 
+            </View>
         </View>
     );
 }
@@ -128,14 +107,10 @@ const styles = StyleSheet.create({
         backgroundColor: 'green'
     },
     playAgainButton: {
-        backgroundColor: '#40B4C1',
-        color: '#fff',
         width: 'auto',
         marginHorizontal: 15,
         marginVertical: 300,
         fontSize: 50,
         textAlign: 'center',
-        // display: 'none',
-        // minHeight: 45,
     }
 })
