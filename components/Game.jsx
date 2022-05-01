@@ -1,8 +1,6 @@
 import { Alert, Button, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState, useRef } from "react";
 import Number from "./Number";
-import App from "../App";
-import PlayAgainButton from "./PlayAgainButton";
 
 export default Game = ({ randomNumbersCount, initialSeconds }) => {
     const [randomNumbers, setRandomNumbers] = useState([]);
