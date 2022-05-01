@@ -19,22 +19,9 @@ export default Game = ({ randomNumbersCount, initialSeconds }) => {
     useEffect(() => console.log(selectedNumbers), [selectedNumbers]);
 
     useEffect(() => {
-        // Exc
-        const numbers = Array.from({ length: randomNumbersCount }).map(() => 1 + Math.floor(10 * Math.random()));
-        const target = numbers.slice(0, randomNumbersCount - 2).reduce((acc, cur) => acc + cur, 0);
-
-        setRandomNumbers(numbers);
-        setTarget(target);
-
-        intervalId.current = setInterval(() => setRemainingSeconds(seconds => seconds - 1), 1000);
+        startGame();
         return () => clearInterval(intervalId.current);
     }, []);
-
-    // useEffect(()=>{
-    //     if (remainingSeconds === 0) {
-    //         clearInterval(intervalId.current);
-    //     }
-    // }, [remainingSeconds]);
 
     useEffect(() => {
         setGameStatus(() => getGameStatus());
@@ -51,8 +38,6 @@ export default Game = ({ randomNumbersCount, initialSeconds }) => {
     const getGameStatus = () => {
         const sumSelected = selectedNumbers.reduce((acc, cur) => acc + randomNumbers[cur], 0);
         if (remainingSeconds === 0 || sumSelected > target) {
-            // PlayAgainButton.styles.random = 'contents';
-            // styles.playAgainButton.display = 'flex';
             return 'LOST';
         } else if (sumSelected === target) {
             return 'WON';
@@ -61,17 +46,15 @@ export default Game = ({ randomNumbersCount, initialSeconds }) => {
             return 'PLAYING';
         }
     };
-    // const status = gameStatus();
 
-    const setInitState = () => {
-        clearInterval(intervalId.current);
+    const startGame = () => {
         const numbers = Array.from({ length: randomNumbersCount }).map(() => 1 + Math.floor(10 * Math.random()));
         const target = numbers.slice(0, randomNumbersCount - 2).reduce((acc, cur) => acc + cur, 0);
 
         setRandomNumbers(numbers);
         setTarget(target);
         setSelectedNumbers([])
-        // setRemainingSeconds(initialSeconds);
+        setRemainingSeconds(initialSeconds);
         intervalId.current = setInterval(() => setRemainingSeconds(seconds => seconds - 1), 1000);
         setGameStatus("PLAYING");
     };
@@ -81,6 +64,13 @@ export default Game = ({ randomNumbersCount, initialSeconds }) => {
         <View>
             <Text style={styles.target}>{target}</Text>
             <Text style={[styles.target, styles[gameStatus]]}>{gameStatus}</Text>
+            {
+                gameStatus !== 'PLAYING' &&
+                <Button
+                    title="Play Again"
+                    onPress={() => startGame()}
+                />
+            }
             <Text>{remainingSeconds}</Text>
             <View style={styles.randomContainer}>
                 {randomNumbers.map((number, index) => (
@@ -93,15 +83,7 @@ export default Game = ({ randomNumbersCount, initialSeconds }) => {
                     />
                 ))}
             </View>
-            {/* <View>
-                <PlayAgainButton style={[styles.playAgainButton]}></PlayAgainButton>
-            </View> */}
-            <Button
-                style={styles.PlayAgainButton}
-                title="Play Again"
-                onPress={() => setInitState()}
-            // onPress={() => Alert.alert('Simple Button pressed')}
-            />
+            
         </View>
     );
 }
@@ -127,15 +109,4 @@ const styles = StyleSheet.create({
     WON: {
         backgroundColor: 'green'
     },
-    playAgainButton: {
-        backgroundColor: '#40B4C1',
-        color: '#fff',
-        width: 'auto',
-        marginHorizontal: 15,
-        marginVertical: 300,
-        fontSize: 50,
-        textAlign: 'center',
-        // display: 'none',
-        // minHeight: 45,
-    }
 })
