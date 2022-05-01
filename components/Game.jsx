@@ -3,11 +3,12 @@ import React, { useEffect, useState, useRef } from "react";
 import Number from "./Number";
 
 export default Game = ({ randomNumbersCount, initialSeconds }) => {
-    const [randomNumbers, setRandomNumbers] = useState([]);
+    const [randomNumbers, setRandomNumbers] = useState([0,0,0,0,0,0]);
     const [target, setTarget] = useState();
     const [selectedNumbers, setSelectedNumbers] = useState([]);
     const [remainingSeconds, setRemainingSeconds] = useState(initialSeconds);
     const [gameStatus, setGameStatus] = useState('PLAYING');
+    const [startPlayButtonVisible, setStartPlayButtonVisible] = useState(false);
 
     const intervalId = useRef();
     // No array -> Exc all the time
@@ -24,7 +25,7 @@ export default Game = ({ randomNumbersCount, initialSeconds }) => {
     useEffect(() => {
         setGameStatus(() => getGameStatus());
         if (remainingSeconds === 0 || gameStatus !== 'PLAYING') {
-            clearInterval(intervalId.current);
+            clearInterval(intervalId);
 
         }
     }, [remainingSeconds, selectedNumbers]);
@@ -34,12 +35,12 @@ export default Game = ({ randomNumbersCount, initialSeconds }) => {
         setSelectedNumbers([...selectedNumbers, number]);
     }
     const getGameStatus = () => {
+
         const sumSelected = selectedNumbers.reduce((acc, cur) => acc + randomNumbers[cur], 0);
         if (remainingSeconds === 0 || sumSelected > target) {
             return 'LOST';
         } else if (sumSelected === target) {
             return 'WON';
-
         } else {
             return 'PLAYING';
         }
@@ -48,18 +49,17 @@ export default Game = ({ randomNumbersCount, initialSeconds }) => {
     const startGame = () => {
         const numbers = Array.from({ length: randomNumbersCount }).map(() => 1 + Math.floor(10 * Math.random()));
         const target = numbers.slice(0, randomNumbersCount - 2).reduce((acc, cur) => acc + cur, 0);
-
         setRandomNumbers(numbers);
         setTarget(target);
         setSelectedNumbers([])
         setRemainingSeconds(initialSeconds);
         intervalId.current = setInterval(() => setRemainingSeconds(seconds => seconds - 1), 1000);
         setGameStatus("PLAYING");
+        setStartPlayButtonVisible(true);
     };
 
-
     return (
-        <View>
+        <View style={{flex: 1, backgroundColor: "white"}}>
             <Text style={styles.target}>{target}</Text>
             <Text style={[styles.target, styles[gameStatus]]}>{gameStatus}</Text>
             {
