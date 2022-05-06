@@ -49,6 +49,8 @@ export default Game = ({ randomNumbersCount, initialSeconds }) => {
         const numbers = Array.from({ length: randomNumbersCount }).map(() => 1 + Math.floor(10 * Math.random()));
         const target = numbers.slice(0, randomNumbersCount - 2).reduce((acc, cur) => acc + cur, 0);
 
+        shuffleNumbers(numbers);
+
         setRandomNumbers(numbers);
         setTarget(target);
         setSelectedNumbers([])
@@ -57,6 +59,9 @@ export default Game = ({ randomNumbersCount, initialSeconds }) => {
         setGameStatus("PLAYING");
     };
 
+    const shuffleNumbers = (numbersArray) =>{
+        numbersArray.sort()
+    }
 
     return (
         <View>
